@@ -1,0 +1,188 @@
+<!-- PANTALLA DE INICIO (DASHBOARD) -->
+<div id="screen-home" class="p-4 space-y-6">
+    <header class="flex items-center justify-between">
+        <div>
+            <p class="text-gray-500 dark:text-gray-400">Hola,</p>
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Carlos</h1>
+        </div>
+        <div class="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
+            <img
+                src="https://placehold.co/100x100/E2E8F0/4A5568?text=C"
+                alt="Avatar de usuario"
+                class="object-cover w-full h-full"
+            />
+        </div>
+    </header>
+
+    <div class="p-4 text-center text-white bg-blue-500 rounded-xl">
+        <p class="font-semibold">
+            Tienes <span class="text-lg font-bold">128</span> objetos en
+            <span class="text-lg font-bold">3</span> propiedades
+        </p>
+    </div>
+
+    <!-- Barra de Búsqueda -->
+    <div class="relative">
+        <input
+            id="search-input"
+            type="text"
+            placeholder="¿Qué estás buscando?"
+            class="w-full py-3 pl-10 pr-4 text-gray-700 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+        />
+        <svg
+            class="absolute w-5 h-5 text-gray-400 left-3 top-3.5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            ></path>
+        </svg>
+    </div>
+
+    <!-- Alertas Próximas -->
+    <div>
+        <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">Alertas Próximas</h2>
+        <div class="space-y-3">
+            <div
+                class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card"
+            >
+                <div class="p-2 bg-red-100 rounded-full">
+                    <svg
+                        class="w-6 h-6 text-red-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-medium text-gray-800 dark:text-gray-100">Leche caduca mañana</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Despensa, Casa Principal</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card"
+            >
+                <div class="p-2 bg-yellow-100 rounded-full">
+                    <svg
+                        class="w-6 h-6 text-yellow-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"
+                        ></path>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-medium text-gray-800 dark:text-gray-100">
+                        Mantenimiento aire acondicionado
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">En 5 días</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Añadidos Recientemente -->
+    <div>
+        <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">
+            Añadido Recientemente
+        </h2>
+        <div class="flex pb-4 -mx-4 space-x-4 overflow-x-auto px-4">
+            <div class="flex-shrink-0 w-32 text-center">
+                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                    <img
+                        src="https://placehold.co/200x200/E2E8F0/4A5568?text=Taladro"
+                        alt="Taladro"
+                        class="object-cover w-full h-full"
+                    />
+                </div>
+                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">
+                    Taladro Inalámbrico
+                </p>
+            </div>
+            <div class="flex-shrink-0 w-32 text-center">
+                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                    <img
+                        src="https://placehold.co/200x200/E2E8F0/4A5568?text=Pasaporte"
+                        alt="Pasaporte"
+                        class="object-cover w-full h-full"
+                    />
+                </div>
+                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">
+                    Pasaporte
+                </p>
+            </div>
+            <div class="flex-shrink-0 w-32 text-center">
+                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                    <img
+                        src="https://placehold.co/200x200/E2E8F0/4A5568?text=TV"
+                        alt="Televisión"
+                        class="object-cover w-full h-full"
+                    />
+                </div>
+                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">
+                    Televisión Salón
+                </p>
+            </div>
+            <div class="flex-shrink-0 w-32 text-center">
+                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                    <img
+                        src="https://placehold.co/200x200/E2E8F0/4A5568?text=Libro"
+                        alt="Libro"
+                        class="object-cover w-full h-full"
+                    />
+                </div>
+                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">
+                    Libro 'El Hobbit'
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PANTALLA DE RESULTADOS DE BÚSQUEDA -->
+<div id="screen-search-results" class="hidden p-4">
+    <div id="search-nav-header" class="flex items-center mb-4">
+        <button
+            id="search-back-btn"
+            class="p-2 mr-3 -ml-2 text-gray-600 rounded-full hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
+        >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                ></path>
+            </svg>
+        </button>
+        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Resultados de Búsqueda</h1>
+    </div>
+    <div id="search-results-content" class="space-y-3"></div>
+</div>

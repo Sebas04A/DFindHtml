@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>DFind - Maqueta de App</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="css/global.css" />
+    </head>
+    <body class="bg-gray-200">
+        <div class="mobile-frame dark" id="app-frame">
+            <div class="mobile-screen">
+                <main id="main-content" class="flex-grow overflow-y-auto main-content"></main>
+
+                <footer
+                    class="flex-shrink-0 w-full bg-white border-t border-gray-200 nav-bar"
+                ></footer>
+            </div>
+        </div>
+
+        <div
+            id="modal-add-object"
+            class="fixed inset-0 z-50 flex-col hidden bg-gray-900 bg-opacity-75"
+        ></div>
+        <div
+            id="modal-add-generic"
+            class="fixed inset-0 z-50 items-center justify-center hidden bg-gray-900 bg-opacity-75"
+        ></div>
+
+        <script type="module" src="js/main.js"></script>
+    </body>
+</html>

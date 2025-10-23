@@ -1,0 +1,106 @@
+<!-- PANTALLA DE PERFIL -->
+<div id="screen-profile" class="hidden">
+    <div class="h-32 bg-blue-500"></div>
+    <div class="p-4 -mt-16">
+        <div class="flex flex-col items-center mb-6">
+            <div
+                class="w-24 h-24 mb-2 bg-gray-300 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800"
+            >
+                <img
+                    src="https://placehold.co/100x100/E2E8F0/4A5568?text=C"
+                    alt="Avatar de usuario"
+                    class="object-cover w-full h-full"
+                />
+            </div>
+            <h1 class="text-xl font-bold">Carlos Rodríguez</h1>
+            <p class="text-sm text-gray-500">carlos.r@email.com</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">Gestión</h3>
+                <div class="bg-white rounded-lg shadow-sm card">
+                    <a
+                        href="#"
+                        class="flex items-center justify-between p-4 border-b dark:border-gray-600"
+                        ><span>Mis Propiedades</span
+                        ><svg
+                            class="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            ></path></svg
+                    ></a>
+                    <a
+                        href="#"
+                        class="flex items-center justify-between p-4 border-b dark:border-gray-600"
+                        ><span>Mis Categorías</span
+                        ><svg
+                            class="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            ></path></svg
+                    ></a>
+                    <a href="#" class="flex items-center justify-between p-4"
+                        ><span>Mis Unidades de Medida</span
+                        ><svg
+                            class="w-5 h-5 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5l7 7-7 7"
+                            ></path></svg
+                    ></a>
+                </div>
+            </div>
+            <div>
+                <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">Configuración</h3>
+                <div class="bg-white rounded-lg shadow-sm card">
+                    <div
+                        class="flex items-center justify-between p-4 border-b dark:border-gray-600"
+                    >
+                        <span>Notificaciones</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" value="" class="sr-only peer" checked />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+                            ></div>
+                        </label>
+                    </div>
+                    <div class="flex items-center justify-between p-4">
+                        <span>Tema Oscuro</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="theme-toggle" class="sr-only peer" />
+                            <div
+                                class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+                            ></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <button
+                class="w-full py-3 font-semibold text-red-600 bg-white border border-red-200 rounded-lg card"
+            >
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+</div>
