@@ -1,1249 +1,899 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>DFind - Maqueta de App</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            body {
-                font-family: 'Inter', sans-serif;
-            }
-            /* Estilo para simular el marco de un teléfono */
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFind - Maqueta de App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variables y reset */
+        :root{
+            --accent: #2563eb; /* azul accesible */
+            --muted: #6b7280;
+            --frame-bg: #1a202c;
+        }
+        html, body {
+            height: 100%;
+            box-sizing: border-box;
+            margin: 0;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e5e7eb;
+        }
+
+        /* --- Tema claro / marco móvil --- */
+        .mobile-frame {
+            max-width: 420px;
+            height: 880px;
+            margin: 1.5rem auto;
+        }
+        .mobile-screen {
+            background-color: #f7fafc;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Dark theme: colores más contrastados y habituales en móviles --- */
+        .dark {
+            --bg-surface: #0b1220;   /* fondo principal - muy oscuro */
+            --bg-elevated: #111827;  /* tarjetas / elevaciones */
+            --text-primary: #E6EEF8; /* texto principal claro */
+            --text-secondary: #9CA3AF; /* texto secundario suave */
+            --border-dark: #1f2937;   /* bordes en tema oscuro */
+            --input-bg-dark: #0b1220; /* campos de formulario */
+            --accent: #2563eb;        /* acento azul */
+        }
+        .dark .mobile-screen {
+            background-color: var(--bg-surface);
+            color: var(--text-primary);
+        }
+        .dark body {
+            background-color: #000; /* respaldo fuera del marco */
+        }
+
+        /* tarjetas / superficies */
+        .card {
+            background-color: #ffffff;
+            border-color: #e5e7eb;
+        }
+        .dark .card {
+            background-color: var(--bg-elevated);
+            border-color: var(--border-dark);
+            color: var(--text-primary);
+        }
+
+        /* barra de navegación inferior */
+        .nav-bar {
+            background-color: #ffffff;
+            border-top-color: #e5e7eb;
+        }
+        .dark .nav-bar {
+            background-color: var(--bg-elevated);
+            border-top-color: var(--border-dark);
+        }
+        .nav-button {
+            color: #6b7280;
+        }
+        .dark .nav-button {
+            color: var(--text-secondary);
+        }
+        .nav-button.active {
+            color: #2563eb;
+        }
+        .dark .nav-button.active {
+            color: var(--accent);
+        }
+
+        /* Inputs / selects / textareas */
+        input, select, textarea {
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            color: #111827;
+        }
+        .dark input, .dark select, .dark textarea {
+            background-color: var(--input-bg-dark);
+            border: 1px solid var(--border-dark);
+            color: var(--text-primary);
+        }
+        /* Placeholders más suaves en oscuro */
+        .dark input::placeholder, .dark textarea::placeholder {
+            color: #9aa4b2;
+        }
+
+        input[type="checkbox"].peer + div {
+            position: relative;
+            display: inline-block;
+            width: 2.75rem;              /* equivalente a w-11 */
+            height: 1.5rem;              /* equivalente a h-6 */
+            border-radius: 9999px;
+            background-color: #e5e7eb;   /* OFF en claro */
+            transition: background-color .18s ease, box-shadow .18s ease;
+            vertical-align: middle;
+            cursor: pointer;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+        }
+        input[type="checkbox"].peer + div::after {
+            content: "";
+            position: absolute;
+            top: 0.125rem;
+            left: 0.125rem;
+            width: 1.125rem;             /* knob */
+            height: 1.125rem;
+            background: #ffffff;
+            border-radius: 9999px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.16);
+            transition: transform .18s cubic-bezier(.4,0,.2,1), background-color .18s;
+            transform: translateX(0);
+        }
+        /* Estado ON (fuerte contraste) */
+        input[type="checkbox"].peer:checked + div {
+            background-color: var(--accent) !important;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.08) inset;
+        }
+        input[type="checkbox"].peer:checked + div::after {
+            /* Mover knob a la derecha; valor fijo para evitar problemas con utilidades tailwind */
+            transform: translateX(1.55rem) !important;
+            background: #ffffff !important;
+        }
+
+        /* Dark theme: estados más contrastados */
+        .dark input[type="checkbox"].peer + div {
+            background-color: #374151; /* OFF oscuro */
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.6);
+        }
+        .dark input[type="checkbox"].peer + div::after {
+            background: #0f1724; /* knob OFF oscuro para distinguir */
+            border: 1px solid rgba(255,255,255,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        }
+        .dark input[type="checkbox"].peer:checked + div {
+            background-color: var(--accent) !important; /* ON azul legible */
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.1) inset;
+        }
+        .dark input[type="checkbox"].peer:checked + div::after {
+            transform: translateX(1.55rem) !important;
+            background: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.12);
+        }
+
+        /* Foco visible accesible */
+        input[type="checkbox"].peer:focus + div,
+        input[type="checkbox"].peer:focus-visible + div {
+            outline: 3px solid rgba(37,99,235,0.16);
+            outline-offset: 3px;
+        }
+
+        /* Scrollbar personalizado */
+        .main-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .main-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+        .dark .main-content::-webkit-scrollbar-thumb {
+            background-color: #324153;
+        }
+
+        /* Sombra para botón central */
+        .add-button-shadow {
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.28), 0 4px 6px -2px rgba(37, 99, 235, 0.12);
+        }
+
+        /* Asegurar que el main haga scroll correctamente dentro del contenedor flex */
+        .mobile-screen main {
+            flex: 1 1 auto;
+            min-height: 0; /* importante para overflow en flex */
+            overflow-y: auto;
+        }
+
+        /* Adaptaciones para safe-area y móviles pequeños */
+        @media (max-width: 420px), (max-height: 800px) {
             .mobile-frame {
-                max-width: 420px;
-                height: 880px;
-                background-color: #1a202c; /* Gris oscuro para el marco */
-                border-radius: 40px;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 15px rgba(0, 0, 0, 0.2);
-                padding: 16px;
-                margin: 2rem auto;
+                width: 100vw;
+                height: 100vh;
+                max-height: 100vh;
+                margin: 0;
+                border-radius: 0;
+                padding: env(safe-area-inset-top,12px) env(safe-area-inset-right,12px) env(safe-area-inset-bottom,12px) env(safe-area-inset-left,12px);
             }
-            .mobile-screen {
-                background-color: #f7fafc; /* Fondo claro por defecto */
-                width: 100%;
-                height: 100%;
-                border-radius: 30px;
-                overflow: hidden;
-                position: relative;
-                display: flex;
-                flex-direction: column;
-            }
-            /* Estilo para el tema oscuro */
-            .dark .mobile-screen {
-                background-color: #1f2937;
-                color: #e5e7eb;
-            }
-            .dark .card {
-                background-color: #374151;
-                border-color: #4b5563;
-            }
-            .dark .nav-bar {
-                background-color: #374151;
-                border-top-color: #4b5563;
-            }
-            .dark .nav-button.active {
-                color: #ffffff;
-            }
-            .dark input,
-            .dark select,
-            .dark textarea {
-                background-color: #4b5563;
-                border-color: #6b7280;
-                color: #e5e7eb;
-            }
-            /* Scrollbar personalizado */
-            .main-content::-webkit-scrollbar {
-                width: 5px;
-            }
-            .main-content::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .main-content::-webkit-scrollbar-thumb {
-                background-color: #cbd5e1;
-                border-radius: 20px;
-            }
-            .dark .main-content::-webkit-scrollbar-thumb {
-                background-color: #4b5563;
-            }
-            .add-button-shadow {
-                box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4),
-                    0 4px 6px -2px rgba(59, 130, 246, 0.2);
-            }
-        </style>
-    </head>
-    <body class="bg-gray-200">
-        <!-- <div class="mobile-frame" id="app-frame"> -->
-        <!-- <div class="mobile-screen"> -->
-        <!-- Contenido principal que cambia -->
-        <main class="flex-grow overflow-y-auto main-content">
-            <!-- PANTALLA DE INICIO (DASHBOARD) -->
-            <div id="screen-home" class="p-4 space-y-6">
-                <header class="flex items-center justify-between">
+            .mobile-screen { border-radius: 0; }
+            footer.nav-bar { padding-bottom: env(safe-area-inset-bottom, 12px); }
+            .mobile-screen main { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+        }
+
+        /* ---------- OVERRIDES PARA UTILITARIOS TAILWIND EN TEMA OSCURO ---------- */
+        /* Convertir bg-white/bg-gray-* a superficies oscuras dentro de .dark */
+        .dark .bg-white { background-color: var(--bg-elevated) !important; color: var(--text-primary) !important; border-color: var(--border-dark) !important; }
+        .dark .bg-gray-50 { background-color: #07101a !important; }
+        .dark .bg-gray-100 { background-color: #0b1724 !important; }
+        .dark .bg-gray-200 { background-color: #0f1b2a !important; }
+        /* Texto: sustituir utilitarios grises por tonos apropiados en oscuro */
+        .dark .text-gray-800, .dark .text-gray-700 { color: var(--text-primary) !important; }
+        .dark .text-gray-600 { color: #9aa4b2 !important; }
+        .dark .text-gray-500 { color: var(--text-secondary) !important; }
+        .dark .text-gray-400 { color: #6b7280 !important; }
+        /* Bordes en utilitarios */
+        .dark .border-gray-200 { border-color: var(--border-dark) !important; }
+        .dark .border { border-color: var(--border-dark) !important; }
+        /* Inputs con bg-white forzados a bg oscuro */
+        .dark input.bg-white, .dark textarea.bg-white, .dark select.bg-white { background-color: var(--input-bg-dark) !important; color: var(--text-primary) !important; border-color: var(--border-dark) !important; }
+        /* Botones y elementos interactivos suaves */
+        .dark .hover\:bg-gray-50:hover { background-color: rgba(255,255,255,0.02) !important; }
+        .dark .hover\:bg-gray-200:hover { background-color: rgba(255,255,255,0.03) !important; }
+        /* Modales */
+        .dark .w-full.max-w-md.mx-auto.mt-auto.bg-white { background-color: var(--bg-elevated) !important; color: var(--text-primary) !important; }
+        .dark .w-full.max-w-sm.p-6.bg-white { background-color: var(--bg-elevated) !important; color: var(--text-primary) !important; }
+        /* Mantener acento azul legible */
+        .dark .bg-blue-500 { background-color: var(--accent) !important; }
+        .dark .text-blue-600 { color: var(--accent) !important; }
+    </style>
+</head>
+<body class="bg-gray-200">
+
+    <div class="mobile-frame" id="app-frame">
+        <div class="mobile-screen">
+            <!-- Contenido principal que cambia -->
+            <main class="flex-grow overflow-y-auto main-content">
+                <!-- PANTALLA DE INICIO (DASHBOARD) -->
+                <div id="screen-home" class="p-4 space-y-6">
+                    <header class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 dark:text-gray-400">Hola, </p>
+                            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Carlos</h1>
+                        </div>
+                        <div class="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
+                           <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=C" alt="Avatar de usuario" class="object-cover w-full h-full">
+                        </div>
+                    </header>
+                    <div class="p-4 text-center text-white bg-blue-500 rounded-xl">
+                        <p class="font-semibold">Tienes <span class="text-lg font-bold">128</span> objetos en <span class="text-lg font-bold">3</span> propiedades</p>
+                    </div>
+                    <!-- Barra de Búsqueda -->
+                    <div class="relative">
+                        <input id="search-input" type="text" placeholder="¿Qué estás buscando?" class="w-full py-3 pl-10 pr-4 text-gray-700 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                        <svg class="absolute w-5 h-5 text-gray-400 left-3 top-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+
+                    <!-- Alertas Próximas -->
                     <div>
-                        <p class="text-gray-500 dark:text-gray-400">Hola,</p>
-                        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Carlos</h1>
+                        <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">Alertas Próximas</h2>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card">
+                                <div class="p-2 bg-red-100 rounded-full"><svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                <div>
+                                    <p class="font-medium text-gray-800 dark:text-gray-100">Leche caduca mañana</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Despensa, Casa Principal</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card">
+                                <div class="p-2 bg-yellow-100 rounded-full"><svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                <div>
+                                    <p class="font-medium text-gray-800 dark:text-gray-100">Mantenimiento aire acondicionado</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">En 5 días</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="w-12 h-12 bg-gray-300 rounded-full overflow-hidden">
-                        <img
-                            src="https://placehold.co/100x100/E2E8F0/4A5568?text=C"
-                            alt="Avatar de usuario"
-                            class="object-cover w-full h-full"
-                        />
+                    
+                    <!-- Añadidos Recientemente -->
+                    <div>
+                        <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">Añadido Recientemente</h2>
+                        <div class="flex pb-4 -mx-4 space-x-4 overflow-x-auto px-4">
+                            <div class="flex-shrink-0 w-32 text-center">
+                                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                                    <img src="https://placehold.co/200x200/E2E8F0/4A5568?text=Taladro" alt="Taladro" class="object-cover w-full h-full">
+                                </div>
+                                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">Taladro Inalámbrico</p>
+                            </div>
+                            <div class="flex-shrink-0 w-32 text-center">
+                                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                                     <img src="https://placehold.co/200x200/E2E8F0/4A5568?text=Pasaporte" alt="Pasaporte" class="object-cover w-full h-full">
+                                </div>
+                                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">Pasaporte</p>
+                            </div>
+                            <div class="flex-shrink-0 w-32 text-center">
+                                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                                     <img src="https://placehold.co/200x200/E2E8F0/4A5568?text=TV" alt="Televisión" class="object-cover w-full h-full">
+                                </div>
+                                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">Televisión Salón</p>
+                            </div>
+                            <div class="flex-shrink-0 w-32 text-center">
+                                <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
+                                     <img src="https://placehold.co/200x200/E2E8F0/4A5568?text=Libro" alt="Libro" class="object-cover w-full h-full">
+                                </div>
+                                <p class="text-sm font-medium text-gray-700 truncate dark:text-gray-200">Libro 'El Hobbit'</p>
+                            </div>
+                        </div>
                     </div>
-                </header>
-                <div class="p-4 text-center text-white bg-blue-500 rounded-xl">
-                    <p class="font-semibold">
-                        Tienes <span class="text-lg font-bold">128</span> objetos en
-                        <span class="text-lg font-bold">3</span> propiedades
-                    </p>
-                </div>
-                <!-- Barra de Búsqueda -->
-                <div class="relative">
-                    <input
-                        id="search-input"
-                        type="text"
-                        placeholder="¿Qué estás buscando?"
-                        class="w-full py-3 pl-10 pr-4 text-gray-700 bg-white border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                    />
-                    <svg
-                        class="absolute w-5 h-5 text-gray-400 left-3 top-3.5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        ></path>
-                    </svg>
                 </div>
 
-                <!-- Alertas Próximas -->
-                <div>
-                    <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">
-                        Alertas Próximas
-                    </h2>
+                <!-- PANTALLA DE INVENTARIO -->
+                <div id="screen-inventory" class="hidden p-4">
+                    <div id="inventory-nav-header" class="flex items-center mb-4">
+                         <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Inventario</h1>
+                    </div>
+                    <div id="inventory-content" class="space-y-3">
+                        <!-- El contenido se generará con JS -->
+                    </div>
+                </div>
+
+                <!-- PANTALLA DE RESULTADOS DE BÚSQUEDA -->
+                <div id="screen-search-results" class="hidden p-4">
+                     <div id="search-nav-header" class="flex items-center mb-4">
+                        <button id="search-back-btn" class="p-2 mr-3 -ml-2 text-gray-600 rounded-full hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Resultados de Búsqueda</h1>
+                    </div>
+                    <div id="search-results-content" class="space-y-3">
+                        <!-- Los resultados de la búsqueda aparecerán aquí -->
+                    </div>
+                </div>
+                
+                <!-- PANTALLA DE ALERTAS -->
+                <div id="screen-alerts" class="hidden p-4">
+                    <h1 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Alertas</h1>
+                     <div class="flex mb-4 border-b border-gray-200 dark:border-gray-700">
+                         <button class="flex-1 py-2 font-semibold text-blue-600 border-b-2 border-blue-600">Próximas</button>
+                         <button class="flex-1 py-2 font-semibold text-gray-500">Pasadas</button>
+                    </div>
                     <div class="space-y-3">
-                        <div
-                            class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card"
-                        >
-                            <div class="p-2 bg-red-100 rounded-full">
-                                <svg
-                                    class="w-6 h-6 text-red-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    ></path>
-                                </svg>
-                            </div>
+                        <div class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card">
+                             <div class="p-2 mt-1 bg-red-100 rounded-full"><svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                             <div>
-                                <p class="font-medium text-gray-800 dark:text-gray-100">
-                                    Leche caduca mañana
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    Despensa, Casa Principal
-                                </p>
+                                <p class="font-medium text-gray-800 dark:text-gray-100">Leche caduca mañana</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Objeto: Leche Entera</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Ubicación: Despensa, Casa Principal</p>
                             </div>
                         </div>
-                        <div
-                            class="flex items-center p-3 space-x-3 bg-white border border-gray-200 rounded-lg shadow-sm card"
-                        >
-                            <div class="p-2 bg-yellow-100 rounded-full">
-                                <svg
-                                    class="w-6 h-6 text-yellow-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"
-                                    ></path>
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    ></path>
-                                </svg>
-                            </div>
+                        <div class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card">
+                            <div class="p-2 mt-1 bg-yellow-100 rounded-full"><svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                             <div>
-                                <p class="font-medium text-gray-800 dark:text-gray-100">
-                                    Mantenimiento aire acondicionado
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">En 5 días</p>
+                                <p class="font-medium text-gray-800 dark:text-gray-100">Mantenimiento aire acondicionado</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">En 5 días</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Objeto: Aire Acondicionado Split</p>
+                            </div>
+                        </div>
+                         <div class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card">
+                             <div class="p-2 mt-1 bg-green-100 rounded-full"><svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <div>
+                                <p class="font-medium text-gray-800 dark:text-gray-100">Garantía del portátil vence</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">En 2 meses</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Objeto: MacBook Pro 14"</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Añadidos Recientemente -->
-                <div>
-                    <h2 class="mb-3 text-lg font-semibold text-gray-800 dark:text-white">
-                        Añadido Recientemente
-                    </h2>
-                    <div class="flex pb-4 -mx-4 space-x-4 overflow-x-auto px-4">
-                        <div class="flex-shrink-0 w-32 text-center">
-                            <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
-                                <img
-                                    src="https://placehold.co/200x200/E2E8F0/4A5568?text=Taladro"
-                                    alt="Taladro"
-                                    class="object-cover w-full h-full"
-                                />
+                <!-- PANTALLA DE PERFIL -->
+                <div id="screen-profile" class="hidden">
+                    <div class="h-32 bg-blue-500"></div>
+                    <div class="p-4 -mt-16">
+                        <div class="flex flex-col items-center mb-6">
+                            <div class="w-24 h-24 mb-2 bg-gray-300 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800">
+                                <img src="https://placehold.co/100x100/E2E8F0/4A5568?text=C" alt="Avatar de usuario" class="object-cover w-full h-full">
                             </div>
-                            <p
-                                class="text-sm font-medium text-gray-700 truncate dark:text-gray-200"
-                            >
-                                Taladro Inalámbrico
-                            </p>
+                            <h1 class="text-xl font-bold">Carlos Rodríguez</h1>
+                            <p class="text-sm text-gray-500">carlos.r@email.com</p>
                         </div>
-                        <div class="flex-shrink-0 w-32 text-center">
-                            <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
-                                <img
-                                    src="https://placehold.co/200x200/E2E8F0/4A5568?text=Pasaporte"
-                                    alt="Pasaporte"
-                                    class="object-cover w-full h-full"
-                                />
-                            </div>
-                            <p
-                                class="text-sm font-medium text-gray-700 truncate dark:text-gray-200"
-                            >
-                                Pasaporte
-                            </p>
-                        </div>
-                        <div class="flex-shrink-0 w-32 text-center">
-                            <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
-                                <img
-                                    src="https://placehold.co/200x200/E2E8F0/4A5568?text=TV"
-                                    alt="Televisión"
-                                    class="object-cover w-full h-full"
-                                />
-                            </div>
-                            <p
-                                class="text-sm font-medium text-gray-700 truncate dark:text-gray-200"
-                            >
-                                Televisión Salón
-                            </p>
-                        </div>
-                        <div class="flex-shrink-0 w-32 text-center">
-                            <div class="w-32 h-32 mb-2 overflow-hidden bg-gray-200 rounded-lg">
-                                <img
-                                    src="https://placehold.co/200x200/E2E8F0/4A5568?text=Libro"
-                                    alt="Libro"
-                                    class="object-cover w-full h-full"
-                                />
-                            </div>
-                            <p
-                                class="text-sm font-medium text-gray-700 truncate dark:text-gray-200"
-                            >
-                                Libro 'El Hobbit'
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANTALLA DE INVENTARIO -->
-            <!-- <div id="screen-inventory" class="hidden p-4">
-                <div id="inventory-nav-header" class="flex items-center mb-4">
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Inventario</h1>
-                </div>
-                <div id="inventory-content" class="space-y-3">
-                    El contenido se generará con JS
-                </div>
-            </div> -->
-
-            <!-- PANTALLA DE RESULTADOS DE BÚSQUEDA -->
-            <div id="screen-search-results" class="hidden p-4">
-                <div id="search-nav-header" class="flex items-center mb-4">
-                    <button
-                        id="search-back-btn"
-                        class="p-2 mr-3 -ml-2 text-gray-600 rounded-full hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"
-                    >
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 19l-7-7 7-7"
-                            ></path>
-                        </svg>
-                    </button>
-                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-                        Resultados de Búsqueda
-                    </h1>
-                </div>
-                <div id="search-results-content" class="space-y-3">
-                    <!-- Los resultados de la búsqueda aparecerán aquí -->
-                </div>
-            </div>
-
-            <!-- PANTALLA DE ALERTAS -->
-            <div id="screen-alerts" class="hidden p-4">
-                <h1 class="mb-4 text-2xl font-bold text-gray-800 dark:text-white">Alertas</h1>
-                <div class="flex mb-4 border-b border-gray-200 dark:border-gray-700">
-                    <button
-                        class="flex-1 py-2 font-semibold text-blue-600 border-b-2 border-blue-600"
-                    >
-                        Próximas
-                    </button>
-                    <button class="flex-1 py-2 font-semibold text-gray-500">Pasadas</button>
-                </div>
-                <div class="space-y-3">
-                    <div
-                        class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card"
-                    >
-                        <div class="p-2 mt-1 bg-red-100 rounded-full">
-                            <svg
-                                class="w-6 h-6 text-red-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                ></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 dark:text-gray-100">
-                                Leche caduca mañana
-                            </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">
-                                Objeto: Leche Entera
-                            </p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Ubicación: Despensa, Casa Principal
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card"
-                    >
-                        <div class="p-2 mt-1 bg-yellow-100 rounded-full">
-                            <svg
-                                class="w-6 h-6 text-yellow-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.096 2.572-1.065z"
-                                ></path>
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                ></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 dark:text-gray-100">
-                                Mantenimiento aire acondicionado
-                            </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">En 5 días</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Objeto: Aire Acondicionado Split
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="flex items-start p-3 space-x-3 bg-white border border-gray-200 rounded-lg card"
-                    >
-                        <div class="p-2 mt-1 bg-green-100 rounded-full">
-                            <svg
-                                class="w-6 h-6 text-green-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                ></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="font-medium text-gray-800 dark:text-gray-100">
-                                Garantía del portátil vence
-                            </p>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">En 2 meses</p>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                Objeto: MacBook Pro 14"
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PANTALLA DE PERFIL -->
-            <div id="screen-profile" class="hidden">
-                <div class="h-32 bg-blue-500"></div>
-                <div class="p-4 -mt-16">
-                    <div class="flex flex-col items-center mb-6">
-                        <div
-                            class="w-24 h-24 mb-2 bg-gray-300 rounded-full overflow-hidden ring-4 ring-white dark:ring-gray-800"
-                        >
-                            <img
-                                src="https://placehold.co/100x100/E2E8F0/4A5568?text=C"
-                                alt="Avatar de usuario"
-                                class="object-cover w-full h-full"
-                            />
-                        </div>
-                        <h1 class="text-xl font-bold">Carlos Rodríguez</h1>
-                        <p class="text-sm text-gray-500">carlos.r@email.com</p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">Gestión</h3>
-                            <div class="bg-white rounded-lg shadow-sm card">
-                                <a
-                                    href="#"
-                                    class="flex items-center justify-between p-4 border-b dark:border-gray-600"
-                                    ><span>Mis Propiedades</span
-                                    ><svg
-                                        class="w-5 h-5 text-gray-400"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5l7 7-7 7"
-                                        ></path>
-                                    </svg>
-                                </a>
-                                <a
-                                    href="#"
-                                    class="flex items-center justify-between p-4 border-b dark:border-gray-600"
-                                    ><span>Mis Categorías</span
-                                    ><svg
-                                        class="w-5 h-5 text-gray-400"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5l7 7-7 7"
-                                        ></path></svg
-                                ></a>
-                                <a href="#" class="flex items-center justify-between p-4"
-                                    ><span>Mis Unidades de Medida</span
-                                    ><svg
-                                        class="w-5 h-5 text-gray-400"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M9 5l7 7-7 7"
-                                        ></path></svg
-                                ></a>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">
-                                Configuración
-                            </h3>
-                            <div class="bg-white rounded-lg shadow-sm card">
-                                <div
-                                    class="flex items-center justify-between p-4 border-b dark:border-gray-600"
-                                >
-                                    <span>Notificaciones</span>
-                                    <label class="relative inline-flex items-center cursor-pointer"
-                                        ><input
-                                            type="checkbox"
-                                            value=""
-                                            class="sr-only peer"
-                                            checked />
-                                        <div
-                                            class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                                        ></div
-                                    ></label>
-                                </div>
-                                <div class="flex items-center justify-between p-4">
-                                    <span>Tema Oscuro</span>
-                                    <label class="relative inline-flex items-center cursor-pointer"
-                                        ><input
-                                            type="checkbox"
-                                            id="theme-toggle"
-                                            class="sr-only peer" />
-                                        <div
-                                            class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                                        ></div
-                                    ></label>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">Gestión</h3>
+                                <div class="bg-white rounded-lg shadow-sm card">
+                                    <a href="#" class="flex items-center justify-between p-4 border-b dark:border-gray-600"><span>Mis Propiedades</span><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
+                                    <a href="#" class="flex items-center justify-between p-4 border-b dark:border-gray-600"><span>Mis Categorías</span><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
+                                    <a href="#" class="flex items-center justify-between p-4"><span>Mis Unidades de Medida</span><svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></a>
                                 </div>
                             </div>
-                        </div>
-                        <button
-                            class="w-full py-3 font-semibold text-red-600 bg-white border border-red-200 rounded-lg card"
-                        >
-                            Cerrar Sesión
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- MODAL PARA AÑADIR OBJETO -->
-            <div
-                id="modal-add-object"
-                class="fixed inset-0 z-50 flex-col hidden bg-gray-900 bg-opacity-75"
-            >
-                <div
-                    class="w-full h-full max-w-md mx-auto mt-auto bg-white rounded-t-2xl dark:bg-gray-800"
-                >
-                    <div
-                        class="flex items-center justify-between p-4 border-b dark:border-gray-700"
-                    >
-                        <h2 class="text-xl font-bold">Añadir Nuevo Objeto</h2>
-                        <button id="close-modal-btn" class="text-gray-500 text-3xl leading-none">
-                            &times;
-                        </button>
-                    </div>
-                    <div
-                        class="p-4 space-y-4 overflow-y-auto"
-                        style="max-height: calc(100% - 120px)"
-                    >
-                        <!-- Paso 1 -->
-                        <div>
-                            <label class="font-semibold">1. ¿Qué es?</label>
-                            <div
-                                class="flex items-center justify-center w-full h-32 mt-2 bg-gray-100 border-2 border-dashed rounded-lg dark:bg-gray-700 dark:border-gray-600"
-                            >
-                                <div class="text-center text-gray-500">
-                                    <svg
-                                        class="w-8 h-8 mx-auto mb-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                                        ></path>
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                                        ></path>
-                                    </svg>
-                                    <p>Tocar para añadir foto</p>
+                            <div>
+                                <h3 class="px-2 mb-2 text-sm font-semibold text-gray-500">Configuración</h3>
+                                <div class="bg-white rounded-lg shadow-sm card">
+                                    <div class="flex items-center justify-between p-4 border-b dark:border-gray-600">
+                                        <span>Notificaciones</span>
+                                        <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" value="" class="sr-only peer" checked><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div></label>
+                                    </div>
+                                    <div class="flex items-center justify-between p-4">
+                                        <span>Tema Oscuro</span>
+                                        <label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="theme-toggle" class="sr-only peer"><div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div></label>
+                                    </div>
                                 </div>
                             </div>
-                            <input
-                                id="modal-object-name"
-                                type="text"
-                                placeholder="* Nombre del Objeto"
-                                class="w-full p-2 mt-2 border rounded"
-                            />
-                            <textarea
-                                placeholder="Descripción (opcional)"
-                                class="w-full p-2 mt-2 border rounded"
-                                rows="2"
-                            ></textarea>
-                            <select class="w-full p-2 mt-2 border rounded">
-                                <option>Seleccionar Categoría</option>
-                                <option>Electrónica</option>
-                                <option>Documentos</option>
-                                <option>Herramientas</option>
-                                <option>Alimentos</option>
-                            </select>
+                            <button class="w-full py-3 font-semibold text-red-600 bg-white border border-red-200 rounded-lg card">Cerrar Sesión</button>
                         </div>
-                        <!-- Paso 2 y 3 -->
-                        <div class="grid grid-cols-2 gap-4">
+                    </div>
+                </div>
+
+                <!-- MODAL PARA AÑADIR OBJETO -->
+                <div id="modal-add-object" class="fixed inset-0 z-50 flex-col hidden bg-gray-900 bg-opacity-75">
+                    <div class="w-full h-full max-w-md mx-auto mt-auto bg-white rounded-t-2xl dark:bg-gray-800">
+                        <div class="flex items-center justify-between p-4 border-b dark:border-gray-700">
+                            <h2 class="text-xl font-bold">Añadir Nuevo Objeto</h2>
+                            <button id="close-modal-btn" class="text-gray-500 text-3xl leading-none">&times;</button>
+                        </div>
+                        <div class="p-4 space-y-4 overflow-y-auto" style="max-height: calc(100% - 120px);">
+                            <!-- Paso 1 -->
                             <div>
-                                <label class="font-semibold">2. Cantidad</label>
-                                <input
-                                    type="number"
-                                    value="1"
-                                    class="w-full p-2 mt-2 border rounded"
-                                />
-                            </div>
-                            <div>
-                                <label class="font-semibold">Unidad</label>
+                                <label class="font-semibold">1. ¿Qué es?</label>
+                                <div class="flex items-center justify-center w-full h-32 mt-2 bg-gray-100 border-2 border-dashed rounded-lg dark:bg-gray-700 dark:border-gray-600">
+                                    <div class="text-center text-gray-500">
+                                        <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                        <p>Tocar para añadir foto</p>
+                                    </div>
+                                </div>
+                                <input id="modal-object-name" type="text" placeholder="* Nombre del Objeto" class="w-full p-2 mt-2 border rounded">
+                                <textarea placeholder="Descripción (opcional)" class="w-full p-2 mt-2 border rounded" rows="2"></textarea>
                                 <select class="w-full p-2 mt-2 border rounded">
-                                    <option>Unidades</option>
-                                    <option>kg</option>
-                                    <option>Litros</option>
+                                    <option>Seleccionar Categoría</option>
+                                    <option>Electrónica</option>
+                                    <option>Documentos</option>
+                                    <option>Herramientas</option>
+                                    <option>Alimentos</option>
                                 </select>
                             </div>
-                        </div>
-                        <div>
-                            <label class="font-semibold">3. ¿Dónde está?</label>
-                            <select class="w-full p-2 mt-2 border rounded">
-                                <option>Casa Principal > Cocina > Despensa</option>
-                                <option>Casa Principal > Garaje > Caja Herramientas</option>
-                                <option>Oficina > Escritorio > Cajón 1</option>
-                            </select>
-                        </div>
-                        <!-- Pasos opcionales -->
-                        <div>
-                            <details>
-                                <summary class="font-semibold text-blue-600 cursor-pointer">
-                                    Detalles y Alertas (Opcional)
-                                </summary>
-                                <div
-                                    class="p-3 mt-2 space-y-4 bg-gray-50 rounded-lg dark:bg-gray-700"
-                                >
-                                    <input
-                                        type="number"
-                                        placeholder="Costo"
-                                        class="w-full p-2 border rounded"
-                                    />
-                                    <div>
-                                        <label class="text-sm text-gray-600 dark:text-gray-300"
-                                            >Fecha de compra</label
-                                        >
-                                        <input type="date" class="w-full p-2 border rounded" />
-                                    </div>
-                                    <button
-                                        class="w-full py-2 text-sm font-semibold text-blue-600 border-2 border-blue-500 border-dashed rounded-lg"
-                                    >
-                                        + Añadir Alerta
-                                    </button>
+                             <!-- Paso 2 y 3 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="font-semibold">2. Cantidad</label>
+                                    <input type="number" value="1" class="w-full p-2 mt-2 border rounded">
                                 </div>
-                            </details>
+                                 <div>
+                                    <label class="font-semibold">Unidad</label>
+                                    <select class="w-full p-2 mt-2 border rounded">
+                                        <option>Unidades</option>
+                                        <option>kg</option>
+                                        <option>Litros</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="font-semibold">3. ¿Dónde está?</label>
+                                <select class="w-full p-2 mt-2 border rounded">
+                                    <option>Casa Principal > Cocina > Despensa</option>
+                                    <option>Casa Principal > Garaje > Caja Herramientas</option>
+                                    <option>Oficina > Escritorio > Cajón 1</option>
+                                </select>
+                            </div>
+                             <!-- Pasos opcionales -->
+                            <div>
+                               <details>
+                                    <summary class="font-semibold text-blue-600 cursor-pointer">Detalles y Alertas (Opcional)</summary>
+                                    <div class="p-3 mt-2 space-y-4 bg-gray-50 rounded-lg dark:bg-gray-700">
+                                        <input type="number" placeholder="Costo" class="w-full p-2 border rounded">
+                                        <div>
+                                            <label class="text-sm text-gray-600 dark:text-gray-300">Fecha de compra</label>
+                                            <input type="date" class="w-full p-2 border rounded">
+                                        </div>
+                                        <button class="w-full py-2 text-sm font-semibold text-blue-600 border-2 border-blue-500 border-dashed rounded-lg">+ Añadir Alerta</button>
+                                    </div>
+                               </details>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <button id="save-object-btn" class="w-full py-3 font-bold text-white bg-blue-600 rounded-lg">Guardar Objeto</button>
                         </div>
                     </div>
-                    <div class="p-4">
-                        <button
-                            id="save-object-btn"
-                            class="w-full py-3 font-bold text-white bg-blue-600 rounded-lg"
-                        >
-                            Guardar Objeto
-                        </button>
+                </div>
+                
+                <!-- MODAL PARA AÑADIR ELEMENTO GENÉRICO (Propiedad, Habitación, etc.) -->
+                <div id="modal-add-generic" class="fixed inset-0 z-50 items-center justify-center hidden bg-gray-900 bg-opacity-75">
+                    <div class="w-full max-w-sm p-6 bg-white rounded-lg shadow-xl dark:bg-gray-800">
+                        <h2 id="modal-generic-title" class="mb-4 text-xl font-bold">Añadir Elemento</h2>
+                        <input id="modal-generic-input" type="text" placeholder="Nombre del elemento" class="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                        <div class="flex justify-end space-x-3">
+                            <button id="modal-generic-cancel" class="px-4 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">Cancelar</button>
+                            <button id="modal-generic-save" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Guardar</button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- MODAL PARA AÑADIR ELEMENTO GENÉRICO (Propiedad, Habitación, etc.) -->
-            <div
-                id="modal-add-generic"
-                class="fixed inset-0 z-50 items-center justify-center hidden bg-gray-900 bg-opacity-75"
-            >
-                <div class="w-full max-w-sm p-6 bg-white rounded-lg shadow-xl dark:bg-gray-800">
-                    <h2 id="modal-generic-title" class="mb-4 text-xl font-bold">Añadir Elemento</h2>
-                    <input
-                        id="modal-generic-input"
-                        type="text"
-                        placeholder="Nombre del elemento"
-                        class="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
-                    />
-                    <div class="flex justify-end space-x-3">
-                        <button
-                            id="modal-generic-cancel"
-                            class="px-4 py-2 font-semibold text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            id="modal-generic-save"
-                            class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                        >
-                            Guardar
-                        </button>
-                    </div>
+            </main>
+
+            <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+            <footer class="flex-shrink-0 w-full bg-white border-t border-gray-200 nav-bar dark:bg-gray-800 dark:border-gray-700">
+                <div class="flex items-center justify-around h-20">
+                    <button data-screen="home" class="p-2 text-center text-gray-500 rounded-lg nav-button active dark:text-gray-400">
+                        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span class="text-xs">Inicio</span>
+                    </button>
+                    <button data-screen="inventory" class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400">
+                        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        <span class="text-xs">Inventario</span>
+                    </button>
+                    <button id="add-object-btn" class="w-16 h-16 mb-8 text-white bg-blue-600 rounded-full add-button-shadow">
+                        <svg class="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                    </button>
+                    <button data-screen="alerts" class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400">
+                        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                        <span class="text-xs">Alertas</span>
+                    </button>
+                    <button data-screen="profile" class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400">
+                        <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        <span class="text-xs">Perfil</span>
+                    </button>
                 </div>
-            </div>
-        </main>
+            </footer>
 
-        <!-- BARRA DE NAVEGACIÓN INFERIOR -->
-        <footer
-            class="flex-shrink-0 w-full bg-white border-t border-gray-200 nav-bar dark:bg-gray-800 dark:border-gray-700"
-        >
-            <div class="flex items-center justify-around h-20">
-                <button
-                    data-screen="home"
-                    class="p-2 text-center text-gray-500 rounded-lg nav-button active dark:text-gray-400"
-                >
-                    <svg
-                        class="w-6 h-6 mx-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                        ></path>
-                    </svg>
-                    <span class="text-xs">Inicio</span>
-                </button>
-                <button
-                    data-screen="inventory"
-                    class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400"
-                >
-                    <svg
-                        class="w-6 h-6 mx-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                        ></path>
-                    </svg>
-                    <span class="text-xs">Inventario</span>
-                </button>
-                <button
-                    id="add-object-btn"
-                    class="w-16 h-16 mb-8 text-white bg-blue-600 rounded-full add-button-shadow"
-                >
-                    <svg
-                        class="w-8 h-8 mx-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                        ></path>
-                    </svg>
-                </button>
-                <button
-                    data-screen="alerts"
-                    class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400"
-                >
-                    <svg
-                        class="w-6 h-6 mx-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                        ></path>
-                    </svg>
-                    <span class="text-xs">Alertas</span>
-                </button>
-                <button
-                    data-screen="profile"
-                    class="p-2 text-center text-gray-500 rounded-lg nav-button dark:text-gray-400"
-                >
-                    <svg
-                        class="w-6 h-6 mx-auto"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        ></path>
-                    </svg>
-                    <span class="text-xs">Perfil</span>
-                </button>
-            </div>
-        </footer>
-        <!-- </div> -->
-        <!-- </div> -->
+        </div>
+    </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // --- ELEMENTOS DEL DOM ---
-                const navButtons = document.querySelectorAll('.nav-button')
-                const screens = document.querySelectorAll('main > div:not([id^="modal-"])')
-                const addObjectBtn = document.getElementById('add-object-btn')
-                const closeModalBtn = document.getElementById('close-modal-btn')
-                const saveObjectBtn = document.getElementById('save-object-btn')
-                const modal = document.getElementById('modal-add-object')
-                const modalObjectNameInput = document.getElementById('modal-object-name')
-                const modalAddGeneric = document.getElementById('modal-add-generic')
-                const modalGenericTitle = document.getElementById('modal-generic-title')
-                const modalGenericInput = document.getElementById('modal-generic-input')
-                const modalGenericCancel = document.getElementById('modal-generic-cancel')
-                const modalGenericSave = document.getElementById('modal-generic-save')
-                const themeToggle = document.getElementById('theme-toggle')
-                const appFrame = document.getElementById('app-frame')
-                const inventoryContent = document.getElementById('inventory-content')
-                const inventoryNavHeader = document.getElementById('inventory-nav-header')
-                const searchInput = document.getElementById('search-input')
-                const screenSearchResults = document.getElementById('screen-search-results')
-                const searchResultsContent = document.getElementById('search-results-content')
-                const searchBackBtn = document.getElementById('search-back-btn')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- ELEMENTOS DEL DOM ---
+            const navButtons = document.querySelectorAll('.nav-button');
+            const screens = document.querySelectorAll('main > div:not([id^="modal-"])');
+            const addObjectBtn = document.getElementById('add-object-btn');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const saveObjectBtn = document.getElementById('save-object-btn');
+            const modal = document.getElementById('modal-add-object');
+            const modalObjectNameInput = document.getElementById('modal-object-name');
+            const modalAddGeneric = document.getElementById('modal-add-generic');
+            const modalGenericTitle = document.getElementById('modal-generic-title');
+            const modalGenericInput = document.getElementById('modal-generic-input');
+            const modalGenericCancel = document.getElementById('modal-generic-cancel');
+            const modalGenericSave = document.getElementById('modal-generic-save');
+            const themeToggle = document.getElementById('theme-toggle');
+            const appFrame = document.getElementById('app-frame');
+            const inventoryContent = document.getElementById('inventory-content');
+            const inventoryNavHeader = document.getElementById('inventory-nav-header');
+            const searchInput = document.getElementById('search-input');
+            const screenSearchResults = document.getElementById('screen-search-results');
+            const searchResultsContent = document.getElementById('search-results-content');
+            const searchBackBtn = document.getElementById('search-back-btn');
 
-                // --- NAVEGACIÓN PRINCIPAL ---
-                const activeNavButtonClass = 'active'
-                const activeTextColorClass = 'text-blue-600'
-                const inactiveTextColorClass = 'text-gray-500'
-                const darkInactiveTextColorClass = 'dark:text-gray-400'
 
-                function hideAllScreens() {
-                    screens.forEach(s => s.classList.add('hidden'))
+            // --- NAVEGACIÓN PRINCIPAL ---
+            const activeNavButtonClass = 'active';
+            const activeTextColorClass = 'text-blue-600';
+            const inactiveTextColorClass = 'text-gray-500';
+            const darkInactiveTextColorClass = 'dark:text-gray-400';
+
+            function hideAllScreens() {
+                screens.forEach(s => s.classList.add('hidden'));
+            }
+
+            function showScreen(screenId) {
+                hideAllScreens();
+                const screenToShow = document.getElementById(`screen-${screenId}`);
+                if (screenToShow) {
+                    screenToShow.classList.remove('hidden');
                 }
+            }
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const screenId = button.dataset.screen;
+                    navButtons.forEach(btn => {
+                        btn.classList.remove(activeTextColorClass, activeNavButtonClass);
+                        btn.classList.add(inactiveTextColorClass, darkInactiveTextColorClass);
+                    });
+                    button.classList.add(activeTextColorClass, activeNavButtonClass);
+                    button.classList.remove(inactiveTextColorClass, darkInactiveTextColorClass);
+                    showScreen(screenId);
+                });
+            });
 
-                function showScreen(screenId) {
-                    hideAllScreens()
-                    const screenToShow = document.getElementById(`screen-${screenId}`)
-                    if (screenToShow) {
-                        screenToShow.classList.remove('hidden')
-                    }
+            // --- ESTADO INICIAL ---
+            showScreen('home');
+            document.querySelector('.nav-button[data-screen="home"]').classList.add(activeTextColorClass, activeNavButtonClass);
+            document.querySelector('.nav-button[data-screen="home"]').classList.remove(inactiveTextColorClass, darkInactiveTextColorClass);
+
+            // --- MODALES ---
+            addObjectBtn.addEventListener('click', (e) => {
+                // Si el evento no viene de un botón del inventario, limpiamos el parentId
+                if (!e.isTrusted) { // simple check to see if it's a programmatic click
+                  // modal.dataset.parentId = ''; // Or set to a default location
                 }
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
 
-                navButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        const screenId = button.dataset.screen
-                        navButtons.forEach(btn => {
-                            btn.classList.remove(activeTextColorClass, activeNavButtonClass)
-                            btn.classList.add(inactiveTextColorClass, darkInactiveTextColorClass)
-                        })
-                        button.classList.add(activeTextColorClass, activeNavButtonClass)
-                        button.classList.remove(inactiveTextColorClass, darkInactiveTextColorClass)
-                        showScreen(screenId)
-                    })
-                })
+            closeModalBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+            
+            function hideGenericModal() {
+                modalAddGeneric.classList.add('hidden');
+                modalAddGeneric.classList.remove('flex');
+                modalGenericInput.value = '';
+            }
+            modalGenericCancel.addEventListener('click', hideGenericModal);
+            
+            // --- TEMA OSCURO ---
+            themeToggle.addEventListener('change', () => {
+                appFrame.classList.toggle('dark');
+            });
 
-                // --- ESTADO INICIAL ---
-                showScreen('home')
-                document
-                    .querySelector('.nav-button[data-screen="home"]')
-                    .classList.add(activeTextColorClass, activeNavButtonClass)
-                document
-                    .querySelector('.nav-button[data-screen="home"]')
-                    .classList.remove(inactiveTextColorClass, darkInactiveTextColorClass)
-
-                // --- MODALES ---
-                addObjectBtn.addEventListener('click', e => {
-                    // Si el evento no viene de un botón del inventario, limpiamos el parentId
-                    if (!e.isTrusted) {
-                        // simple check to see if it's a programmatic click
-                        // modal.dataset.parentId = ''; // Or set to a default location
-                    }
-                    modal.classList.remove('hidden')
-                    modal.classList.add('flex')
-                })
-
-                closeModalBtn.addEventListener('click', () => {
-                    modal.classList.add('hidden')
-                    modal.classList.remove('flex')
-                })
-
-                function hideGenericModal() {
-                    modalAddGeneric.classList.add('hidden')
-                    modalAddGeneric.classList.remove('flex')
-                    modalGenericInput.value = ''
+            // --- BASE DE DATOS Y LÓGICA DE INVENTARIO ---
+            const inventoryDB = {
+                'propiedades': [
+                    { id: 'prop1', nombre: 'Casa Principal', icono: '🏠', children: ['hab1', 'hab2', 'hab3'] },
+                    { id: 'prop2', nombre: 'Apartamento de Playa', icono: '🏖️', children: ['hab4'] },
+                    { id: 'prop3', nombre: 'Oficina', icono: '🏢', children: [] },
+                ],
+                'habitaciones': {
+                    'hab1': { nombre: 'Cocina', parent: 'prop1', children: ['alm1', 'obj1'] },
+                    'hab2': { nombre: 'Dormitorio Principal', parent: 'prop1', children: ['alm2'] },
+                    'hab3': { nombre: 'Garaje', parent: 'prop1', children: ['alm3', 'obj2'] },
+                    'hab4': { nombre: 'Salón', parent: 'prop2', children: [] },
+                },
+                'almacenamientos': {
+                    'alm1': { nombre: 'Despensa', parent: 'hab1', children: ['obj3', 'obj4'] },
+                    'alm2': { nombre: 'Armario Ropa', parent: 'hab2', children: [] },
+                    'alm3': { nombre: 'Caja Herramientas', parent: 'hab3', children: ['obj5'] },
+                },
+                'objetos': {
+                    'obj1': { nombre: 'Televisión', parent: 'hab1' },
+                    'obj2': { nombre: 'Bicicleta', parent: 'hab3' },
+                    'obj3': { nombre: 'Latas de atún', parent: 'alm1' },
+                    'obj4': { nombre: 'Paquete de arroz', parent: 'alm1' },
+                    'obj5': { nombre: 'Taladro Inalámbrico', parent: 'alm3' },
                 }
-                modalGenericCancel.addEventListener('click', hideGenericModal)
+            };
+            
+            let navStack = []; // Pila para el historial de navegación
 
-                // --- TEMA OSCURO ---
-                themeToggle.addEventListener('change', () => {
-                    appFrame.classList.toggle('dark')
-                })
+            function getFullPath(type, id) {
+                let path = [];
+                let currentId = id;
+                let currentType = type;
 
-                // --- BASE DE DATOS Y LÓGICA DE INVENTARIO ---
-                const inventoryDB = {
-                    propiedades: [
-                        {
-                            id: 'prop1',
-                            nombre: 'Casa Principal',
-                            icono: '🏠',
-                            children: ['hab1', 'hab2', 'hab3'],
-                        },
-                        {
-                            id: 'prop2',
-                            nombre: 'Apartamento de Playa',
-                            icono: '🏖️',
-                            children: ['hab4'],
-                        },
-                        { id: 'prop3', nombre: 'Oficina', icono: '🏢', children: [] },
-                    ],
-                    habitaciones: {
-                        hab1: { nombre: 'Cocina', parent: 'prop1', children: ['alm1', 'obj1'] },
-                        hab2: {
-                            nombre: 'Dormitorio Principal',
-                            parent: 'prop1',
-                            children: ['alm2'],
-                        },
-                        hab3: { nombre: 'Garaje', parent: 'prop1', children: ['alm3', 'obj2'] },
-                        hab4: { nombre: 'Salón', parent: 'prop2', children: [] },
-                    },
-                    almacenamientos: {
-                        alm1: { nombre: 'Despensa', parent: 'hab1', children: ['obj3', 'obj4'] },
-                        alm2: { nombre: 'Armario Ropa', parent: 'hab2', children: [] },
-                        alm3: { nombre: 'Caja Herramientas', parent: 'hab3', children: ['obj5'] },
-                    },
-                    objetos: {
-                        obj1: { nombre: 'Televisión', parent: 'hab1' },
-                        obj2: { nombre: 'Bicicleta', parent: 'hab3' },
-                        obj3: { nombre: 'Latas de atún', parent: 'alm1' },
-                        obj4: { nombre: 'Paquete de arroz', parent: 'alm1' },
-                        obj5: { nombre: 'Taladro Inalámbrico', parent: 'alm3' },
-                    },
-                }
-
-                let navStack = [] // Pila para el historial de navegación
-
-                function getFullPath(type, id) {
-                    let path = []
-                    let currentId = id
-                    let currentType = type
-
-                    while (currentId) {
-                        let item
-                        if (currentType === 'propiedades') {
-                            item = inventoryDB.propiedades.find(p => p.id === currentId)
-                            if (item) path.unshift(item.nombre)
-                            currentId = null
-                        } else {
-                            item = inventoryDB[currentType]?.[currentId]
-                            if (item) {
-                                if (currentType !== 'objetos') {
-                                    path.unshift(item.nombre)
-                                }
-                                currentId = item.parent
-                                if (inventoryDB.almacenamientos[currentId]) {
-                                    currentType = 'almacenamientos'
-                                } else if (inventoryDB.habitaciones[currentId]) {
-                                    currentType = 'habitaciones'
-                                } else if (inventoryDB.propiedades.find(p => p.id === currentId)) {
-                                    currentType = 'propiedades'
-                                } else {
-                                    currentType = null
-                                }
+                while (currentId) {
+                    let item;
+                    if (currentType === 'propiedades') {
+                        item = inventoryDB.propiedades.find(p => p.id === currentId);
+                        if (item) path.unshift(item.nombre);
+                        currentId = null; 
+                    } else {
+                        item = inventoryDB[currentType]?.[currentId];
+                        if (item) {
+                            if (currentType !== 'objetos') {
+                                path.unshift(item.nombre);
+                            }
+                            currentId = item.parent;
+                            if (inventoryDB.almacenamientos[currentId]) {
+                                currentType = 'almacenamientos';
+                            } else if (inventoryDB.habitaciones[currentId]) {
+                                currentType = 'habitaciones';
+                            } else if (inventoryDB.propiedades.find(p => p.id === currentId)) {
+                                currentType = 'propiedades';
                             } else {
-                                currentId = null
+                                currentType = null;
                             }
+                        } else {
+                            currentId = null;
                         }
-                    }
-                    return path.join(' > ')
-                }
-
-                modalGenericSave.addEventListener('click', () => {
-                    const newItemName = modalGenericInput.value
-                    const addType = modalAddGeneric.dataset.addType
-                    const parentId = modalAddGeneric.dataset.parentId
-
-                    if (newItemName && newItemName.trim() !== '') {
-                        const trimmedName = newItemName.trim()
-                        const newId = `${addType.substring(0, 3)}${Date.now()}`
-                        switch (addType) {
-                            case 'propiedad':
-                                inventoryDB.propiedades.push({
-                                    id: newId,
-                                    nombre: trimmedName,
-                                    icono: '🏠',
-                                    children: [],
-                                })
-                                renderInventory('propiedades')
-                                break
-                            case 'habitacion':
-                                inventoryDB.habitaciones[newId] = {
-                                    nombre: trimmedName,
-                                    parent: parentId,
-                                    children: [],
-                                }
-                                inventoryDB.propiedades
-                                    .find(p => p.id === parentId)
-                                    .children.push(newId)
-                                renderInventory('habitaciones', parentId)
-                                break
-                            case 'almacenamiento':
-                                inventoryDB.almacenamientos[newId] = {
-                                    nombre: trimmedName,
-                                    parent: parentId,
-                                    children: [],
-                                }
-                                inventoryDB.habitaciones[parentId].children.push(newId)
-                                renderInventory('contenidos', parentId)
-                                break
-                        }
-                    }
-                    hideGenericModal()
-                })
-
-                saveObjectBtn.addEventListener('click', () => {
-                    const objectName = modalObjectNameInput.value
-                    const parentId = modal.dataset.parentId
-
-                    if (objectName && objectName.trim() !== '' && parentId) {
-                        const trimmedName = objectName.trim()
-                        const newId = `obj${Date.now()}`
-
-                        inventoryDB.objetos[newId] = { nombre: trimmedName, parent: parentId }
-
-                        if (inventoryDB.almacenamientos[parentId]) {
-                            inventoryDB.almacenamientos[parentId].children.push(newId)
-                        } else if (inventoryDB.habitaciones[parentId]) {
-                            inventoryDB.habitaciones[parentId].children.push(newId)
-                        }
-
-                        // Cerrar y resetear modal
-                        modal.classList.add('hidden')
-                        modal.classList.remove('flex')
-                        modalObjectNameInput.value = ''
-
-                        // Refrescar la vista actual
-                        const currentState = navStack[navStack.length - 1] || {
-                            level: 'propiedades',
-                            id: null,
-                        }
-                        renderInventory(currentState.level, currentState.id)
-                    } else {
-                        // Simple validación visual
-                        modalObjectNameInput.classList.add('border-red-500', 'ring-red-500')
-                        setTimeout(
-                            () =>
-                                modalObjectNameInput.classList.remove(
-                                    'border-red-500',
-                                    'ring-red-500'
-                                ),
-                            2000
-                        )
-                    }
-                })
-
-                function renderInventory(level, id) {
-                    inventoryContent.innerHTML = ''
-                    let items = []
-                    let title = 'Inventario'
-
-                    if (level === 'propiedades') {
-                        items = inventoryDB.propiedades
-                        title = 'Propiedades'
-                    } else if (level === 'habitaciones') {
-                        const prop = inventoryDB.propiedades.find(p => p.id === id)
-                        items = prop.children.map(childId => ({
-                            ...inventoryDB.habitaciones[childId],
-                            id: childId,
-                            tipo: 'habitacion',
-                        }))
-                        title = prop.nombre
-                    } else if (level === 'contenidos') {
-                        const hab = inventoryDB.habitaciones[id]
-                        const contenedores = hab.children
-                            .filter(childId => childId.startsWith('alm'))
-                            .map(childId => ({
-                                ...inventoryDB.almacenamientos[childId],
-                                id: childId,
-                                tipo: 'almacenamiento',
-                            }))
-                        const objetosSueltos = hab.children
-                            .filter(childId => childId.startsWith('obj'))
-                            .map(childId => ({
-                                ...inventoryDB.objetos[childId],
-                                id: childId,
-                                tipo: 'objeto',
-                            }))
-                        items = [...contenedores, ...objetosSueltos]
-                        title = hab.nombre
-                    } else if (level === 'objetos') {
-                        const alm = inventoryDB.almacenamientos[id]
-                        items = alm.children.map(childId => ({
-                            ...inventoryDB.objetos[childId],
-                            id: childId,
-                            tipo: 'objeto',
-                        }))
-                        title = alm.nombre
-                    }
-
-                    let backButtonHTML = ''
-                    if (navStack.length > 0) {
-                        backButtonHTML = `<button id="inventory-back-btn" class="p-2 mr-3 -ml-2 text-gray-600 rounded-full hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>`
-                    }
-                    inventoryNavHeader.innerHTML = `${backButtonHTML}<h1 class="text-2xl font-bold text-gray-800 truncate dark:text-white">${title}</h1>`
-
-                    if (items.length > 0) {
-                        items.forEach(item => {
-                            const div = document.createElement('div')
-                            div.className =
-                                'flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 card'
-                            div.dataset.id = item.id
-                            let nextLevel = '',
-                                icon = item.icono || '📁'
-                            if (level === 'propiedades') nextLevel = 'habitaciones'
-                            if (item.tipo === 'habitacion') {
-                                nextLevel = 'contenidos'
-                                icon = '🚪'
-                            }
-                            if (item.tipo === 'almacenamiento') {
-                                nextLevel = 'objetos'
-                                icon = '📦'
-                            }
-                            if (item.tipo === 'objeto') {
-                                icon = '🔩'
-                            }
-                            div.dataset.nextLevel = nextLevel
-                            div.innerHTML = `<div class="flex items-center"><span class="mr-4 text-2xl">${icon}</span><span class="font-medium text-gray-800 dark:text-gray-100">${
-                                item.nombre
-                            }</span></div>${
-                                item.tipo !== 'objeto'
-                                    ? '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>'
-                                    : ''
-                            }`
-                            inventoryContent.appendChild(div)
-                        })
-                    } else {
-                        inventoryContent.innerHTML = `<p class="py-10 text-center text-gray-500">No hay elementos aquí.</p>`
-                    }
-
-                    // --- Botones de añadir dinámicos ---
-                    const addButtonsContainer = document.createElement('div')
-                    addButtonsContainer.className = 'mt-4 space-y-3'
-
-                    const buttonConfig = {
-                        propiedades: [{ text: '+ Añadir Propiedad', type: 'propiedad' }],
-                        habitaciones: [{ text: '+ Añadir Habitación', type: 'habitacion' }],
-                        contenidos: [
-                            { text: '+ Añadir Almacenamiento', type: 'almacenamiento' },
-                            { text: '+ Añadir Objeto', type: 'objeto_principal' },
-                        ],
-                        objetos: [{ text: '+ Añadir Objeto', type: 'objeto_principal' }],
-                    }
-
-                    if (buttonConfig[level]) {
-                        buttonConfig[level].forEach(config => {
-                            const addButton = document.createElement('button')
-                            addButton.className =
-                                'w-full py-3 font-semibold text-blue-600 border-2 border-blue-500 border-dashed rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700'
-                            addButton.textContent = config.text
-                            addButton.addEventListener('click', () => {
-                                if (config.type === 'objeto_principal') {
-                                    modal.dataset.parentId = id // Asignar el padre actual (habitación o almacenamiento)
-                                    addObjectBtn.dispatchEvent(new Event('click'))
-                                } else {
-                                    modalGenericTitle.textContent = config.text.replace(
-                                        '+',
-                                        'Añadir'
-                                    )
-                                    modalGenericInput.placeholder = `Nombre de ${config.type}`
-                                    modalAddGeneric.dataset.addType = config.type
-                                    modalAddGeneric.dataset.parentId = id
-                                    modalAddGeneric.classList.remove('hidden')
-                                    modalAddGeneric.classList.add('flex')
-                                    modalGenericInput.focus()
-                                }
-                            })
-                            addButtonsContainer.appendChild(addButton)
-                        })
-                        inventoryContent.appendChild(addButtonsContainer)
-                    }
-
-                    // --- Asignar Event Listeners ---
-                    inventoryContent.querySelectorAll('div[data-id]').forEach(el => {
-                        el.addEventListener('click', () => {
-                            if (el.dataset.nextLevel) {
-                                navStack.push({ level, id })
-                                renderInventory(el.dataset.nextLevel, el.dataset.id)
-                            }
-                        })
-                    })
-
-                    if (document.getElementById('inventory-back-btn')) {
-                        document
-                            .getElementById('inventory-back-btn')
-                            .addEventListener('click', () => {
-                                const lastState = navStack.pop()
-                                if (lastState) renderInventory(lastState.level, lastState.id)
-                            })
                     }
                 }
+                return path.join(' > ');
+            }
 
-                document
-                    .querySelector('[data-screen="inventory"]')
-                    .addEventListener('click', () => {
-                        navStack = []
-                        renderInventory('propiedades')
-                    })
+            modalGenericSave.addEventListener('click', () => {
+                const newItemName = modalGenericInput.value;
+                const addType = modalAddGeneric.dataset.addType;
+                const parentId = modalAddGeneric.dataset.parentId;
 
-                // --- LÓGICA DE BÚSQUEDA ---
-                searchInput.addEventListener('input', () => {
-                    const term = searchInput.value.trim().toLowerCase()
+                if (newItemName && newItemName.trim() !== '') {
+                    const trimmedName = newItemName.trim();
+                    const newId = `${addType.substring(0, 3)}${Date.now()}`;
+                    switch(addType) {
+                        case 'propiedad':
+                            inventoryDB.propiedades.push({ id: newId, nombre: trimmedName, icono: '🏠', children: [] });
+                            renderInventory('propiedades');
+                            break;
+                        case 'habitacion':
+                            inventoryDB.habitaciones[newId] = { nombre: trimmedName, parent: parentId, children: [] };
+                            inventoryDB.propiedades.find(p => p.id === parentId).children.push(newId);
+                            renderInventory('habitaciones', parentId);
+                            break;
+                        case 'almacenamiento':
+                            inventoryDB.almacenamientos[newId] = { nombre: trimmedName, parent: parentId, children: [] };
+                            inventoryDB.habitaciones[parentId].children.push(newId);
+                            renderInventory('contenidos', parentId);
+                            break;
+                    }
+                }
+                hideGenericModal();
+            });
 
-                    if (term.length < 2) {
-                        if (!screenSearchResults.classList.contains('hidden')) {
-                            showScreen('home') // Vuelve a la pantalla de inicio si la búsqueda se borra
-                        }
-                        return
+            saveObjectBtn.addEventListener('click', () => {
+                const objectName = modalObjectNameInput.value;
+                const parentId = modal.dataset.parentId;
+
+                if (objectName && objectName.trim() !== '' && parentId) {
+                    const trimmedName = objectName.trim();
+                    const newId = `obj${Date.now()}`;
+                    
+                    inventoryDB.objetos[newId] = { nombre: trimmedName, parent: parentId };
+
+                    if (inventoryDB.almacenamientos[parentId]) {
+                        inventoryDB.almacenamientos[parentId].children.push(newId);
+                    } else if (inventoryDB.habitaciones[parentId]) {
+                        inventoryDB.habitaciones[parentId].children.push(newId);
                     }
 
-                    hideAllScreens()
-                    screenSearchResults.classList.remove('hidden')
-                    searchResultsContent.innerHTML = ''
+                    // Cerrar y resetear modal
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    modalObjectNameInput.value = '';
 
-                    const results = Object.keys(inventoryDB.objetos).filter(objId =>
-                        inventoryDB.objetos[objId].nombre.toLowerCase().includes(term)
-                    )
+                    // Refrescar la vista actual
+                    const currentState = navStack[navStack.length-1] || { level: 'propiedades', id: null };
+                    renderInventory(currentState.level, currentState.id);
+                } else {
+                    // Simple validación visual
+                    modalObjectNameInput.classList.add('border-red-500', 'ring-red-500');
+                    setTimeout(() => modalObjectNameInput.classList.remove('border-red-500', 'ring-red-500'), 2000);
+                }
+            });
 
-                    if (results.length > 0) {
-                        results.forEach(objId => {
-                            const item = inventoryDB.objetos[objId]
-                            const path = getFullPath('objetos', objId)
-                            const resultDiv = document.createElement('div')
-                            resultDiv.className =
-                                'p-4 bg-white border border-gray-200 rounded-lg card'
-                            resultDiv.innerHTML = `
+
+            function renderInventory(level, id) {
+                inventoryContent.innerHTML = '';
+                let items = [];
+                let title = 'Inventario';
+
+                if (level === 'propiedades') {
+                    items = inventoryDB.propiedades;
+                    title = 'Propiedades';
+                } else if (level === 'habitaciones') {
+                    const prop = inventoryDB.propiedades.find(p => p.id === id);
+                    items = prop.children.map(childId => ({...inventoryDB.habitaciones[childId], id: childId, tipo: 'habitacion' }));
+                    title = prop.nombre;
+                } else if (level === 'contenidos') {
+                    const hab = inventoryDB.habitaciones[id];
+                    const contenedores = hab.children.filter(childId => childId.startsWith('alm')).map(childId => ({...inventoryDB.almacenamientos[childId], id: childId, tipo: 'almacenamiento' }));
+                    const objetosSueltos = hab.children.filter(childId => childId.startsWith('obj')).map(childId => ({...inventoryDB.objetos[childId], id: childId, tipo: 'objeto'}));
+                    items = [...contenedores, ...objetosSueltos];
+                    title = hab.nombre;
+                } else if (level === 'objetos') {
+                    const alm = inventoryDB.almacenamientos[id];
+                    items = alm.children.map(childId => ({...inventoryDB.objetos[childId], id: childId, tipo: 'objeto' }));
+                    title = alm.nombre;
+                }
+
+                let backButtonHTML = '';
+                if(navStack.length > 0) {
+                     backButtonHTML = `<button id="inventory-back-btn" class="p-2 mr-3 -ml-2 text-gray-600 rounded-full hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>`;
+                }
+                inventoryNavHeader.innerHTML = `${backButtonHTML}<h1 class="text-2xl font-bold text-gray-800 truncate dark:text-white">${title}</h1>`;
+                
+                if (items.length > 0) {
+                    items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 card";
+                        div.dataset.id = item.id;
+                        let nextLevel = '', icon = item.icono || '📁';
+                        if (level === 'propiedades') nextLevel = 'habitaciones';
+                        if (item.tipo === 'habitacion') { nextLevel = 'contenidos'; icon = '🚪'; }
+                        if (item.tipo === 'almacenamiento') { nextLevel = 'objetos'; icon = '📦'; }
+                        if (item.tipo === 'objeto') { icon = '🔩'; }
+                        div.dataset.nextLevel = nextLevel;
+                        div.innerHTML = `<div class="flex items-center"><span class="mr-4 text-2xl">${icon}</span><span class="font-medium text-gray-800 dark:text-gray-100">${item.nombre}</span></div>${item.tipo !== 'objeto' ? '<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>' : ''}`;
+                        inventoryContent.appendChild(div);
+                    });
+                } else {
+                    inventoryContent.innerHTML = `<p class="py-10 text-center text-gray-500">No hay elementos aquí.</p>`;
+                }
+                
+                // --- Botones de añadir dinámicos ---
+                const addButtonsContainer = document.createElement('div');
+                addButtonsContainer.className = "mt-4 space-y-3";
+
+                const buttonConfig = {
+                    'propiedades': [{ text: '+ Añadir Propiedad', type: 'propiedad' }],
+                    'habitaciones': [{ text: '+ Añadir Habitación', type: 'habitacion' }],
+                    'contenidos': [
+                        { text: '+ Añadir Almacenamiento', type: 'almacenamiento' },
+                        { text: '+ Añadir Objeto', type: 'objeto_principal' }
+                    ],
+                    'objetos': [{ text: '+ Añadir Objeto', type: 'objeto_principal' }]
+                };
+
+                if (buttonConfig[level]) {
+                    buttonConfig[level].forEach(config => {
+                        const addButton = document.createElement('button');
+                        addButton.className = "w-full py-3 font-semibold text-blue-600 border-2 border-blue-500 border-dashed rounded-lg hover:bg-blue-50 dark:hover:bg-gray-700";
+                        addButton.textContent = config.text;
+                        addButton.addEventListener('click', () => {
+                            if (config.type === 'objeto_principal') {
+                                modal.dataset.parentId = id; // Asignar el padre actual (habitación o almacenamiento)
+                                addObjectBtn.dispatchEvent(new Event('click'));
+                            } else {
+                                modalGenericTitle.textContent = config.text.replace('+', 'Añadir');
+                                modalGenericInput.placeholder = `Nombre de ${config.type}`;
+                                modalAddGeneric.dataset.addType = config.type;
+                                modalAddGeneric.dataset.parentId = id;
+                                modalAddGeneric.classList.remove('hidden');
+                                modalAddGeneric.classList.add('flex');
+                                modalGenericInput.focus();
+                            }
+                        });
+                        addButtonsContainer.appendChild(addButton);
+                    });
+                     inventoryContent.appendChild(addButtonsContainer);
+                }
+
+                // --- Asignar Event Listeners ---
+                inventoryContent.querySelectorAll('div[data-id]').forEach(el => {
+                    el.addEventListener('click', () => {
+                        if (el.dataset.nextLevel) {
+                            navStack.push({ level, id });
+                            renderInventory(el.dataset.nextLevel, el.dataset.id);
+                        }
+                    });
+                });
+                
+                if (document.getElementById('inventory-back-btn')) {
+                    document.getElementById('inventory-back-btn').addEventListener('click', () => {
+                        const lastState = navStack.pop();
+                        if (lastState) renderInventory(lastState.level, lastState.id);
+                    });
+                }
+            }
+
+            document.querySelector('[data-screen="inventory"]').addEventListener('click', () => {
+                navStack = [];
+                renderInventory('propiedades');
+            });
+
+            // --- LÓGICA DE BÚSQUEDA ---
+            searchInput.addEventListener('input', () => {
+                const term = searchInput.value.trim().toLowerCase();
+                
+                if (term.length < 2) {
+                    if (!screenSearchResults.classList.contains('hidden')) {
+                        showScreen('home'); // Vuelve a la pantalla de inicio si la búsqueda se borra
+                    }
+                    return;
+                }
+                
+                hideAllScreens();
+                screenSearchResults.classList.remove('hidden');
+                searchResultsContent.innerHTML = ''; 
+
+                const results = Object.keys(inventoryDB.objetos).filter(objId =>
+                    inventoryDB.objetos[objId].nombre.toLowerCase().includes(term)
+                );
+
+                if (results.length > 0) {
+                    results.forEach(objId => {
+                        const item = inventoryDB.objetos[objId];
+                        const path = getFullPath('objetos', objId);
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = "p-4 bg-white border border-gray-200 rounded-lg card";
+                        resultDiv.innerHTML = `
                             <p class="font-semibold text-gray-800 dark:text-gray-100">${item.nombre}</p>
                             <p class="text-sm text-gray-500 dark:text-gray-400">${path}</p>
-                        `
-                            searchResultsContent.appendChild(resultDiv)
-                        })
-                    } else {
-                        searchResultsContent.innerHTML = `<p class="py-10 text-center text-gray-500">No se encontraron resultados para "${searchInput.value}".</p>`
-                    }
-                })
+                        `;
+                        searchResultsContent.appendChild(resultDiv);
+                    });
+                } else {
+                    searchResultsContent.innerHTML = `<p class="py-10 text-center text-gray-500">No se encontraron resultados para "${searchInput.value}".</p>`;
+                }
+            });
 
-                searchBackBtn.addEventListener('click', () => {
-                    searchInput.value = ''
-                    showScreen('home')
-                })
-            })
-        </script>
-    </body>
+            searchBackBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                showScreen('home');
+            });
+
+        });
+    </script>
+</body>
 </html>
+
